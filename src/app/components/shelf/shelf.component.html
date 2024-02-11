@@ -1,0 +1,41 @@
+<div class="shelves" cdkDropListGroup>
+  <div
+  class="shelf"
+  *ngFor="let shelf of shelves; index as position"
+  cdkDropList
+  [cdkDropListData]="shelf.products"
+  (cdkDropListDropped)="onDrop($event)">
+  @if(position > 0) {
+    <div class="buttons">
+      <mat-toolbar color="primary">
+        @if(shelf.template === 'none' || shelf.products.length < 1 || shelf.products.length > 3) {
+          <span class="error" matTooltip="Esta estantería no se puede guardar. Comprueba que tienes seleccionada una plantilla y que hay entre 1 y 3 productos"><mat-icon color="warn">warning</mat-icon> </span>
+          <span class="spacer"></span>
+        }
+        <mat-select [(value)]="shelf.template">
+          <mat-option value="none">Sin plantilla</mat-option>
+          @for(template of templates; track template) {
+            <mat-option value="{{template.id}}">{{template.name}}</mat-option>
+          }
+        </mat-select>
+        <span class="spacer"></span>
+        <button mat-icon-button (click)="moveShelfToUp(position)" [disabled]="position === 1"><mat-icon>arrow_upward</mat-icon></button>
+        <button mat-icon-button (click)="moveShelfToDown(position)" [disabled]="position === shelves.length - 1"><mat-icon>arrow_downward</mat-icon></button>
+        <button mat-icon-button (click)="removeShelf(position)"><mat-icon>delete</mat-icon></button>
+      </mat-toolbar>
+    </div>
+  }
+  @else if (shelf.products.length > 0 ) {
+    <p class="info">Productos a ordenar</p>
+  }
+  @if (shelf.products.length > 0) {
+    <div [className]="'products ' + shelf.template">
+      @for(product of shelf.products; track product) {
+        <zara-product [data]="product" cdkDrag></zara-product>
+      }
+    </div>
+    } @else if (position > 0){
+      <p class="info">No hay productos</p>
+    }
+  </div>
+</div>
